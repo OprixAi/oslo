@@ -1,69 +1,1312 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Oprix AI | Enterprise SAP Optimization</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              display: ['Space Grotesk', 'sans-serif'],
-            },
-            colors: {
-              oprix: {
-                dark: '#0a0a0f',
-                card: '#13131f',
-                // Updated to Teal/Green to match logo
-                accent: '#14b8a6', // Teal-500
-                accentHover: '#0d9488', // Teal-600
-                secondary: '#64748b',
-                border: '#27272a'
-              }
-            },
-            animation: {
-              'spin-slow': 'spin 12s linear infinite',
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oprix AI | Enterprise SAP Optimization</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Babel Standalone for in-browser JSX/TS compilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            oprix: {
+              dark: '#0a0a0f',
+              card: '#13131f',
+              accent: '#14b8a6', // Teal-500
+              accentHover: '#0d9488', // Teal-600
+              secondary: '#64748b',
+              border: '#27272a'
             }
+          },
+          animation: {
+            'spin-slow': 'spin 12s linear infinite',
           }
         }
       }
-    </script>
-    <style>
-      body {
-        background-color: #050507;
-        color: #ffffff;
-      }
-      .glass-panel {
-        background: rgba(19, 19, 31, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .gradient-text {
-        background: linear-gradient(135deg, #2dd4bf 0%, #3b82f6 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-    </style>
+    }
+  </script>
+  <style>
+    body {
+      background-color: #050507;
+      color: #ffffff;
+    }
+    .glass-panel {
+      background: rgba(19, 19, 31, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #2dd4bf 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Hide scrollbar for cleaner UI */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0a0f; 
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333; 
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #444; 
+    }
+  </style>
+
   <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.263.1",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.15.0",
+    "recharts": "https://esm.sh/recharts@2.8.0",
+    "@google/genai": "https://esm.sh/@google/genai@0.0.12",
     "react/": "https://esm.sh/react@^19.2.3/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
-    "recharts": "https://esm.sh/recharts@^3.6.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
   }
 }
 </script>
 </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-type="module" data-presets="typescript,react">
+    import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+    import { createRoot } from 'react-dom/client';
+    import { HashRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+    import { 
+      Menu, X, Shield, Lock, ArrowRight, CheckCircle, Database, Layers, TrendingUp, 
+      Target, Eye, Users, Award, Cpu, Zap, BarChart, Globe, Check, FileText, Download, 
+      ExternalLink, Mail, MapPin, Phone, Send, Save, RefreshCw, Layout as LayoutIcon, Type, Image as ImageIcon,
+      MessageSquare, Loader, Bot
+    } from 'lucide-react';
+    import { BarChart as ReBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+    import { GoogleGenAI } from "@google/genai";
+
+    // --- TYPES ---
+    interface SiteContent {
+      theme: {
+        primaryColor: string;
+        secondaryColor: string;
+        fontHeading: string;
+        fontBody: string;
+      };
+      home: {
+        heroTitle: string;
+        heroSubtitle: string;
+        heroCta: string;
+        valuePropTitle: string;
+        valuePropDesc: string;
+      };
+      about: {
+        missionTitle: string;
+        missionDesc: string;
+        visionTitle: string;
+        visionDesc: string;
+      };
+      services: {
+        title: string;
+        items: Array<{
+          id: string;
+          title: string;
+          desc: string;
+          icon: string;
+          details: string;
+          benefits: string[];
+        }>;
+      };
+      contact: {
+        email: string;
+        address: string;
+        phone: string;
+      };
+    }
+
+    // --- CONSTANTS ---
+    const DEFAULT_CONTENT: SiteContent = {
+      theme: {
+        primaryColor: '#14b8a6', // Teal
+        secondaryColor: '#64748b',
+        fontHeading: 'Space Grotesk',
+        fontBody: 'Inter',
+      },
+      home: {
+        heroTitle: 'Intelligent ERP Optimization',
+        heroSubtitle: 'Oprix AI transforms static SAP environments into dynamic, automated ecosystems using enterprise-grade artificial intelligence.',
+        heroCta: 'Explore Solutions',
+        valuePropTitle: 'Why Oprix AI?',
+        valuePropDesc: 'We bridge the gap between legacy infrastructure and future-ready automation, delivering 40% efficiency gains in Q1.',
+      },
+      about: {
+        missionTitle: 'Our Mission',
+        missionDesc: 'To liberate enterprise workforce from repetitive tasks through deep-learning process automation.',
+        visionTitle: 'Our Vision',
+        visionDesc: 'A world where enterprise operations are self-optimizing, secure, and infinitely scalable.',
+      },
+      services: {
+        title: 'Core Capabilities',
+        items: [
+          {
+            id: '1',
+            title: 'SAP Automation',
+            desc: 'End-to-end workflow automation within SAP S/4HANA environments.',
+            icon: 'Cpu',
+            details: 'Our SAP Automation agents utilize RFC connections to perform complex transactions autonomously. From PO creation to invoice verification, our models mimic human keystrokes but at machine speed.',
+            benefits: ['Reduces manual entry by 92%', 'Zero-error transaction processing', '24/7 autonomous operation']
+          },
+          {
+            id: '2',
+            title: 'Predictive Analytics',
+            desc: 'Forecast supply chain disruptions before they impact the bottom line.',
+            icon: 'BarChart',
+            details: 'By ingesting historical data from your ERP and combining it with external market signals, Oprix predicts shortages, logistics delays, and cash flow anomalies weeks in advance.',
+            benefits: ['95% forecast accuracy', 'Dynamic safety stock adjustment', 'Cash flow liquidity modeling']
+          },
+          {
+            id: '3',
+            title: 'Legacy Integration',
+            desc: 'Seamlessly connect modern AI tools with legacy ERP stacks.',
+            icon: 'Database',
+            details: 'We build the bridge between green-screen mainframes and modern LLMs. Oprix middleware allows you to query 30-year-old databases using natural language.',
+            benefits: ['No system migration required', 'API wrapper for legacy SQL', 'SOC2 Compliant Security']
+          },
+          {
+            id: '4',
+            title: 'Process Mining',
+            desc: 'Identify bottlenecks in real-time using advanced computer vision.',
+            icon: 'Zap',
+            details: 'Our Process Mining engine visualizes the "Digital Footprint" of your organization, highlighting exactly where approval chains act as bottlenecks or where duplicate payments occur.',
+            benefits: ['Real-time bottleneck alerts', 'Duplicate payment detection', 'Workflow optimization suggestions']
+          }
+        ],
+      },
+      contact: {
+        email: 'solutions@oprix.ai',
+        address: '100 Enterprise Way, Silicon Valley, CA',
+        phone: '+1 (555) 012-3456',
+      },
+    };
+
+    // --- CONTEXT ---
+    const SiteContext = createContext(undefined);
+
+    const SiteProvider = ({ children }) => {
+      const [content, setContent] = useState(DEFAULT_CONTENT);
+      const [isAdminMode, setIsAdminMode] = useState(false);
+
+      useEffect(() => {
+        const savedContent = localStorage.getItem('oprix_site_content');
+        if (savedContent) {
+          try {
+            setContent(JSON.parse(savedContent));
+          } catch (e) {
+            console.error("Failed to parse saved content", e);
+          }
+        }
+      }, []);
+
+      useEffect(() => {
+        localStorage.setItem('oprix_site_content', JSON.stringify(content));
+      }, [content]);
+
+      const updateContent = (section, data) => {
+        setContent((prev) => ({
+          ...prev,
+          [section]: {
+            ...prev[section],
+            ...data,
+          },
+        }));
+      };
+
+      const resetContent = () => {
+        if (window.confirm("Are you sure you want to reset all content to defaults? This cannot be undone.")) {
+          setContent(DEFAULT_CONTENT);
+        }
+      };
+
+      const toggleAdminMode = () => setIsAdminMode(!isAdminMode);
+
+      return (
+        <SiteContext.Provider value={{ content, updateContent, resetContent, isAdminMode, toggleAdminMode }}>
+          {children}
+        </SiteContext.Provider>
+      );
+    };
+
+    const useSite = () => {
+      const context = useContext(SiteContext);
+      if (!context) {
+        throw new Error('useSite must be used within a SiteProvider');
+      }
+      return context;
+    };
+
+    // --- COMPONENTS ---
+
+    const OprixLogo = ({ className = "w-10 h-10" }) => (
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+        <defs>
+          <linearGradient id="oprix-gradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#2dd4bf" /> 
+            <stop offset="100%" stopColor="#10b981" /> 
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="14" stroke="url(#oprix-gradient)" strokeWidth="6" className="opacity-90" />
+        <circle cx="50" cy="50" r="6" fill="url(#oprix-gradient)" />
+        <g className="origin-center animate-spin-slow">
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+            <g key={i} transform={`rotate(${angle} 50 50)`}>
+              <line x1="68" y1="50" x2="80" y2="50" stroke="url(#oprix-gradient)" strokeWidth="3" strokeLinecap="round" />
+              <circle cx="88" cy="50" r="6" fill="url(#oprix-gradient)" />
+              <circle cx="60" cy="50" r="3" fill="url(#oprix-gradient)" className="opacity-70" />
+            </g>
+          ))}
+        </g>
+      </svg>
+    );
+
+    const Layout = ({ children }) => {
+      const [isMenuOpen, setIsMenuOpen] = useState(false);
+      const location = useLocation();
+      const { content } = useSite();
+
+      const navLinks = [
+        { name: 'Home', path: '/' },
+        { name: 'Services', path: '/services' },
+        { name: 'About', path: '/about' },
+        { name: 'Resources', path: '/resources' },
+        { name: 'Contact', path: '/contact' },
+      ];
+
+      return (
+        <div className="min-h-screen flex flex-col font-sans text-gray-100 selection:bg-oprix-accent selection:text-white">
+          <header className="sticky top-0 z-50 glass-panel border-b border-white/5">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-20">
+                <Link to="/" className="flex items-center space-x-3 group">
+                  <div className="relative transition-transform duration-300">
+                    <OprixLogo className="w-10 h-10" />
+                    <div className="absolute inset-0 bg-oprix-accent/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  </div>
+                  <span className="font-display font-bold text-2xl tracking-tight text-white group-hover:text-white transition-colors">
+                    Oprix <span className="text-oprix-accent group-hover:text-white transition-colors">Ai</span>
+                  </span>
+                </Link>
+
+                <nav className="hidden md:flex space-x-8 items-center">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      className={`text-sm font-medium transition-colors duration-200 ${
+                        location.pathname === link.path
+                          ? 'text-oprix-accent'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                  <Link to="/admin" className="ml-4 p-2 text-gray-600 hover:text-oprix-accent transition-colors">
+                     <Lock className="w-4 h-4" />
+                  </Link>
+                </nav>
+
+                <div className="md:hidden">
+                  <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="text-gray-400 hover:text-white focus:outline-none"
+                  >
+                    {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {isMenuOpen && (
+              <div className="md:hidden glass-panel border-t border-white/5 absolute w-full">
+                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`block px-3 py-4 rounded-md text-base font-medium ${
+                        location.pathname === link.path
+                          ? 'bg-oprix-accent/10 text-oprix-accent'
+                          : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </header>
+
+          <main className="flex-grow relative">
+              <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-oprix-accent/5 rounded-full blur-[100px]"></div>
+                <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-teal-900/10 rounded-full blur-[120px]"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-no-repeat bg-cover opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")` }}></div>
+              </div>
+              {children}
+          </main>
+
+          <footer className="border-t border-white/10 bg-oprix-dark pt-16 pb-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div className="col-span-1 md:col-span-1">
+                  <div className="flex items-center space-x-2 mb-4 group">
+                     <OprixLogo className="w-8 h-8" />
+                     <span className="font-display font-bold text-xl">Oprix <span className="text-oprix-accent">Ai</span></span>
+                  </div>
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    Pioneering the future of enterprise automation. Intelligent solutions for complex SAP ecosystems.
+                  </p>
+                </div>
+                
+                <div>
+                  <h4 className="font-bold text-white mb-6">Company</h4>
+                  <ul className="space-y-4 text-sm text-gray-500">
+                    <li><Link to="/about" className="hover:text-oprix-accent transition-colors">About Us</Link></li>
+                    <li><Link to="/services" className="hover:text-oprix-accent transition-colors">Services</Link></li>
+                    <li><Link to="/careers" className="hover:text-oprix-accent transition-colors">Careers</Link></li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-white mb-6">Legal</h4>
+                  <ul className="space-y-4 text-sm text-gray-500">
+                    <li><Link to="/privacy" className="hover:text-oprix-accent transition-colors">Privacy Policy</Link></li>
+                    <li><Link to="/terms" className="hover:text-oprix-accent transition-colors">Terms of Service</Link></li>
+                    <li><Link to="/security" className="hover:text-oprix-accent transition-colors">Security</Link></li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-white mb-6">Contact</h4>
+                  <ul className="space-y-4 text-sm text-gray-500">
+                    <li className="flex items-center"><span className="w-20 text-gray-600">Email:</span> {content.contact.email}</li>
+                    <li className="flex items-start"><span className="w-20 text-gray-600 shrink-0">Address:</span> {content.contact.address}</li>
+                    <li className="flex items-center"><span className="w-20 text-gray-600">Phone:</span> {content.contact.phone}</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p className="text-gray-600 text-sm">© {new Date().getFullYear()} Oprix AI Inc. All rights reserved.</p>
+                <div className="flex space-x-6 mt-4 md:mt-0">
+                   <div className="w-5 h-5 bg-gray-800 rounded-full hover:bg-oprix-accent transition-colors cursor-pointer"></div>
+                   <div className="w-5 h-5 bg-gray-800 rounded-full hover:bg-oprix-accent transition-colors cursor-pointer"></div>
+                   <div className="w-5 h-5 bg-gray-800 rounded-full hover:bg-oprix-accent transition-colors cursor-pointer"></div>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    };
+
+    const AIChatWidget = () => {
+      const [isOpen, setIsOpen] = useState(false);
+      const [input, setInput] = useState('');
+      const [messages, setMessages] = useState([
+        { role: 'model', text: 'Hello. I am the Oprix Enterprise Assistant. How can I help optimize your workflow today?' }
+      ]);
+      const [isLoading, setIsLoading] = useState(false);
+      const messagesEndRef = useRef(null);
+
+      const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      };
+
+      useEffect(() => {
+        scrollToBottom();
+      }, [messages, isOpen]);
+
+      const handleSend = async () => {
+        if (!input.trim()) return;
+
+        const userMessage = input;
+        setInput('');
+        setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+        setIsLoading(true);
+
+        try {
+          // NOTE: process.env.API_KEY is not available in browser like this. 
+          // For the sake of this single file demo, we will use a simulation or need the user to input key.
+          
+          let apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : null;
+
+          if (!apiKey) {
+             // Mock response for demo purposes if no key found
+             setTimeout(() => {
+                setMessages(prev => [...prev, { role: 'model', text: "Note: No API Key found in environment. This is a demo response." }]);
+                setIsLoading(false);
+             }, 1000);
+             return;
+          }
+
+          const ai = new GoogleGenAI({ apiKey });
+          const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: userMessage,
+            config: {
+                systemInstruction: "You are an AI assistant for Oprix AI, an enterprise SAP optimization company. Keep answers professional, concise, and business-focused.",
+            }
+          });
+          
+          const text = response.text || "I apologize, I couldn't process that request.";
+          setMessages(prev => [...prev, { role: 'model', text }]);
+
+        } catch (error) {
+          console.error(error);
+          setMessages(prev => [...prev, { role: 'model', text: "Connection to enterprise node failed. Please try again later." }]);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      return (
+        <div className="fixed bottom-6 right-6 z-50">
+          {!isOpen && (
+            <button 
+              onClick={() => setIsOpen(true)}
+              className="bg-oprix-accent hover:bg-oprix-accentHover text-white p-4 rounded-full shadow-lg shadow-blue-500/30 transition-all hover:scale-110"
+            >
+              <MessageSquare className="w-6 h-6" />
+            </button>
+          )}
+
+          {isOpen && (
+            <div className="w-80 md:w-96 glass-panel rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-oprix-accent/30 animate-in slide-in-from-bottom-5 duration-300">
+              <div className="p-4 bg-oprix-accent/10 border-b border-white/5 flex justify-between items-center">
+                <div className="flex items-center space-x-2">
+                  <Bot className="w-5 h-5 text-oprix-accent" />
+                  <span className="font-semibold text-sm">Oprix Assistant</span>
+                </div>
+                <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="h-80 overflow-y-auto p-4 space-y-4 bg-black/40">
+                {messages.map((msg, idx) => (
+                  <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
+                      msg.role === 'user' 
+                        ? 'bg-oprix-accent text-white rounded-br-none' 
+                        : 'bg-white/10 text-gray-200 rounded-bl-none'
+                    }`}>
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-white/10 rounded-2xl rounded-bl-none px-4 py-3 flex items-center space-x-2">
+                      <Loader className="w-4 h-4 animate-spin text-oprix-accent" />
+                      <span className="text-xs text-gray-400">Processing...</span>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className="p-3 bg-black/60 border-t border-white/5">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                    placeholder="Ask about SAP optimization..."
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:border-oprix-accent/50 text-white placeholder-gray-500"
+                  />
+                  <button 
+                    onClick={handleSend}
+                    disabled={isLoading || !input.trim()}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-oprix-accent hover:bg-oprix-accent/10 rounded-lg disabled:opacity-50"
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // --- PAGES ---
+
+    const Home = () => {
+      const { content } = useSite();
+
+      return (
+        <div className="flex flex-col">
+          <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
+            <div className="absolute inset-0 z-0">
+               <div className="w-full h-full" style={{ 
+                 backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)', 
+                 backgroundSize: '50px 50px' 
+               }}></div>
+            </div>
+            
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+              <div className="max-w-4xl">
+                <div className="inline-flex items-center space-x-2 bg-oprix-accent/10 border border-oprix-accent/20 rounded-full px-4 py-1.5 mb-8 animate-fade-in-up">
+                  <span className="w-2 h-2 rounded-full bg-oprix-accent animate-pulse"></span>
+                  <span className="text-oprix-accent text-xs font-semibold uppercase tracking-wider">Oprix AI v2.0 Live</span>
+                </div>
+                
+                <h1 className="font-display text-5xl md:text-7xl font-bold leading-tight mb-6">
+                  {content.home.heroTitle.split(' ').map((word, i) => (
+                    <span key={i} className={i === 1 ? 'gradient-text' : 'text-white'}>{word} </span>
+                  ))}
+                </h1>
+                
+                <p className="text-xl text-gray-400 mb-10 max-w-2xl leading-relaxed">
+                  {content.home.heroSubtitle}
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link to="/contact" className="px-8 py-4 bg-oprix-accent hover:bg-oprix-accentHover text-white font-semibold rounded-lg transition-all shadow-lg shadow-teal-500/20 flex items-center justify-center">
+                    {content.home.heroCta}
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Link>
+                  <Link to="/services" className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold rounded-lg transition-all flex items-center justify-center backdrop-blur-sm">
+                    View Capabilities
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden lg:block w-1/3 h-2/3 pointer-events-none">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full opacity-30 animate-pulse">
+                <path fill="#14b8a6" d="M42.7,-73.2C55.9,-67.1,67.4,-57.6,76.5,-46.3C85.6,-35,92.3,-21.9,91.8,-8.9C91.3,4.2,83.6,17.2,74.5,28.6C65.4,40,54.9,49.8,43.5,58.3C32.1,66.8,19.8,74.1,6.3,76.2C-7.2,78.3,-21.9,75.2,-35.1,68.2C-48.3,61.2,-60,50.3,-68.9,37.6C-77.8,24.9,-83.9,10.4,-82.9,-3.6C-81.9,-17.6,-73.8,-31.1,-63.4,-42.2C-53,-53.3,-40.3,-62,-27.3,-68.3C-14.3,-74.6,-1,-78.5,12.7,-78.4L26.4,-78.3Z" transform="translate(100 100)" />
+              </svg>
+            </div>
+          </section>
+
+          <section className="border-y border-white/5 bg-black/20 backdrop-blur-sm py-12">
+             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                  {[
+                    { label: 'Processes Automated', value: '1M+' },
+                    { label: 'Efficiency Gain', value: '45%' },
+                    { label: 'Enterprise Clients', value: '200+' },
+                    { label: 'ROI in Year 1', value: '3.5x' },
+                  ].map((stat, i) => (
+                    <div key={i} className="text-center">
+                      <div className="text-3xl font-display font-bold text-white mb-1">{stat.value}</div>
+                      <div className="text-sm text-gray-500 uppercase tracking-wide">{stat.label}</div>
+                    </div>
+                  ))}
+               </div>
+             </div>
+          </section>
+
+          <section className="py-24 relative">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">{content.home.valuePropTitle}</h2>
+                <p className="text-lg text-gray-400">{content.home.valuePropDesc}</p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="glass-panel p-8 rounded-2xl border border-white/5 hover:border-oprix-accent/50 transition-all duration-300 group">
+                   <div className="w-12 h-12 bg-oprix-accent/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-oprix-accent/20 transition-colors">
+                     <Layers className="w-6 h-6 text-oprix-accent" />
+                   </div>
+                   <h3 className="text-xl font-bold mb-3">Seamless Integration</h3>
+                   <p className="text-gray-400 leading-relaxed">Deploys directly into SAP S/4HANA without disrupting core business logic or requiring extensive downtime.</p>
+                </div>
+                
+                <div className="glass-panel p-8 rounded-2xl border border-white/5 hover:border-oprix-accent/50 transition-all duration-300 group">
+                   <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-purple-500/20 transition-colors">
+                     <TrendingUp className="w-6 h-6 text-purple-400" />
+                   </div>
+                   <h3 className="text-xl font-bold mb-3">Predictive Forecasting</h3>
+                   <p className="text-gray-400 leading-relaxed">Uses historical ERP data to predict inventory shortages, cash flow gaps, and maintenance needs.</p>
+                </div>
+
+                <div className="glass-panel p-8 rounded-2xl border border-white/5 hover:border-oprix-accent/50 transition-all duration-300 group">
+                   <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
+                     <Database className="w-6 h-6 text-emerald-400" />
+                   </div>
+                   <h3 className="text-xl font-bold mb-3">Data Hygiene</h3>
+                   <p className="text-gray-400 leading-relaxed">Automated cleansing of master data ensures your decision-making is based on the single source of truth.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="py-24 bg-white/5 relative overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+               <div className="grid lg:grid-cols-2 gap-16 items-center">
+                  <div>
+                     <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">Designed for the Modern Enterprise</h2>
+                     <div className="space-y-6">
+                        {[
+                          "SOC2 Type II Compliant Security",
+                          "Real-time SAP RFC Connectivity",
+                          "Customizable AI Models per Department",
+                          "Full Audit Trail & Governance"
+                        ].map((feature, i) => (
+                          <div key={i} className="flex items-start">
+                            <CheckCircle className="w-6 h-6 text-oprix-accent mr-4 shrink-0" />
+                            <span className="text-lg text-gray-300">{feature}</span>
+                          </div>
+                        ))}
+                     </div>
+                     <div className="mt-10">
+                       <Link to="/resources" className="text-oprix-accent font-semibold hover:text-white transition-colors flex items-center">
+                         Read Technical Documentation <ArrowRight className="ml-2 w-4 h-4" />
+                       </Link>
+                     </div>
+                  </div>
+                  <div className="relative">
+                     <div className="absolute inset-0 bg-oprix-accent/20 blur-[80px] rounded-full"></div>
+                     <div className="relative glass-panel border border-white/10 rounded-xl p-6 shadow-2xl">
+                        <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                          </div>
+                          <div className="text-xs text-gray-500 font-mono">system_monitor.exe</div>
+                        </div>
+                        <div className="space-y-4 font-mono text-sm text-emerald-400">
+                           <div className="flex justify-between"><span>> connecting to sap_prod_01...</span> <span>[OK]</span></div>
+                           <div className="flex justify-between"><span>> analyzing workflow_cycles...</span> <span>[DONE]</span></div>
+                           <div className="flex justify-between"><span>> detecting inefficiencies...</span> <span className="text-yellow-400">[24 FOUND]</span></div>
+                           <div className="flex justify-between"><span>> optimizing logic_stream...</span> <span className="animate-pulse">...</span></div>
+                           <div className="h-32 mt-4 bg-black/40 rounded border border-white/5 p-2 text-xs text-gray-500">
+                             <div className="flex items-end space-x-2 h-full justify-around pt-4">
+                                <div className="w-8 bg-gray-700 h-[40%] rounded-t"></div>
+                                <div className="w-8 bg-gray-700 h-[60%] rounded-t"></div>
+                                <div className="w-8 bg-gray-700 h-[30%] rounded-t"></div>
+                                <div className="w-8 bg-oprix-accent h-[85%] rounded-t shadow-[0_0_15px_rgba(20,184,166,0.5)]"></div>
+                                <div className="w-8 bg-gray-700 h-[50%] rounded-t"></div>
+                             </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+          </section>
+
+          <section className="py-24 text-center">
+            <div className="max-w-4xl mx-auto px-4">
+               <h2 className="text-4xl md:text-5xl font-display font-bold mb-8">Ready to Optimize?</h2>
+               <p className="text-xl text-gray-400 mb-10">Join the forward-thinking enterprises using Oprix AI to define the future of work.</p>
+               <Link to="/contact" className="inline-block px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-gray-200 transition-colors">
+                 Schedule a Consultation
+               </Link>
+            </div>
+          </section>
+        </div>
+      );
+    };
+
+    const About = () => {
+      const { content } = useSite();
+
+      return (
+        <div className="pt-20 pb-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-20">
+              <h1 className="text-4xl md:text-6xl font-display font-bold mb-6">Redefining Enterprise Intelligence</h1>
+              <p className="text-xl text-gray-400">
+                We are a team of data scientists, SAP architects, and automation experts dedicated to the next industrial revolution.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-12 mb-24">
+              <div className="glass-panel p-10 rounded-2xl border-l-4 border-oprix-accent">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="p-3 bg-oprix-accent/10 rounded-lg">
+                    <Target className="w-8 h-8 text-oprix-accent" />
+                  </div>
+                  <h2 className="text-2xl font-bold font-display">{content.about.missionTitle}</h2>
+                </div>
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  {content.about.missionDesc}
+                </p>
+              </div>
+              
+              <div className="glass-panel p-10 rounded-2xl border-l-4 border-purple-500">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="p-3 bg-purple-500/10 rounded-lg">
+                    <Eye className="w-8 h-8 text-purple-500" />
+                  </div>
+                  <h2 className="text-2xl font-bold font-display">{content.about.visionTitle}</h2>
+                </div>
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  {content.about.visionDesc}
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-24">
+              <h2 className="text-3xl font-bold font-display mb-12 text-center">Our Core Principles</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                 <div className="bg-white/5 p-8 rounded-xl hover:bg-white/10 transition-colors">
+                    <h3 className="text-xl font-bold mb-4 text-white">Precision First</h3>
+                    <p className="text-gray-400">In enterprise ERP, close enough isn't good enough. Our models are tuned for 99.9% accuracy.</p>
+                 </div>
+                 <div className="bg-white/5 p-8 rounded-xl hover:bg-white/10 transition-colors">
+                    <h3 className="text-xl font-bold mb-4 text-white">Security by Design</h3>
+                    <p className="text-gray-400">We treat data sovereignty as a fundamental right. Your data never leaves your secure perimeter.</p>
+                 </div>
+                 <div className="bg-white/5 p-8 rounded-xl hover:bg-white/10 transition-colors">
+                    <h3 className="text-xl font-bold mb-4 text-white">Radical Efficiency</h3>
+                    <p className="text-gray-400">We don't just automate; we optimize. We ruthlessly eliminate waste in every digital workflow.</p>
+                 </div>
+              </div>
+            </div>
+
+            <div className="glass-panel rounded-3xl p-12 text-center">
+               <Users className="w-12 h-12 text-gray-500 mx-auto mb-6" />
+               <h2 className="text-3xl font-bold mb-4">Led by Industry Veterans</h2>
+               <p className="text-gray-400 max-w-2xl mx-auto mb-10">Our leadership brings decades of experience from SAP, Oracle, Google, and McKinsey.</p>
+               <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="group">
+                       <div className="w-full aspect-square bg-gray-800 rounded-xl mb-4 overflow-hidden relative">
+                          <img src={`https://picsum.photos/400/400?random=${i}`} alt="Team Member" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0" />
+                       </div>
+                       <h4 className="font-bold text-lg">Executive Name</h4>
+                       <p className="text-sm text-oprix-accent">Title / Role</p>
+                    </div>
+                  ))}
+               </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const iconMap = {
+      Cpu, Database, Zap, BarChart, Globe, Shield
+    };
+
+    const Services = () => {
+      const { content } = useSite();
+      const [selectedService, setSelectedService] = useState(null);
+
+      return (
+        <div className="pt-20 pb-24 relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-20">
+              <h1 className="text-5xl md:text-7xl font-display font-bold mb-8">
+                Intelligent <span className="text-oprix-accent">Services</span>
+              </h1>
+              <p className="text-xl text-gray-400 max-w-2xl">
+                Deploy modular AI agents designed to handle specific high-value tasks within your SAP ecosystem.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-20">
+              {content.services.items.map((item) => {
+                const Icon = iconMap[item.icon] || Zap;
+                return (
+                  <div 
+                    key={item.id} 
+                    onClick={() => setSelectedService(item)}
+                    className="group relative glass-panel p-10 rounded-2xl border border-white/5 hover:border-oprix-accent transition-all duration-300 cursor-pointer"
+                  >
+                    <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                       <ArrowRight className="w-6 h-6 text-oprix-accent -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+                    </div>
+                    <div className="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center mb-8 border border-white/10 group-hover:border-oprix-accent/50 transition-colors">
+                      <Icon className="w-7 h-7 text-white group-hover:text-oprix-accent transition-colors" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 font-display">{item.title}</h3>
+                    <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                      {item.desc}
+                    </p>
+                    <div className="flex items-center text-oprix-accent font-semibold text-sm mt-4">
+                      Explore Service <ArrowRight className="ml-2 w-4 h-4" />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="bg-gray-900/50 border border-white/10 rounded-3xl p-12 text-center">
+                <h2 className="text-3xl font-display font-bold mb-8">How It Fits Your Stack</h2>
+                <div className="relative h-64 md:h-96 flex items-center justify-center">
+                   <div className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+                   <div className="flex justify-between w-full max-w-4xl relative z-10 px-4 md:px-0">
+                      <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 text-center w-40">
+                        <Database className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                        <span className="font-bold block">SAP S/4HANA</span>
+                      </div>
+                      
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="animate-pulse text-oprix-accent font-mono text-xs mb-2">SYNCING DATA...</div>
+                        <div className="w-16 h-16 rounded-full bg-oprix-accent flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.5)]">
+                           <Cpu className="w-8 h-8 text-white" />
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 text-center w-40">
+                        <BarChart className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                        <span className="font-bold block">PowerBI / Tableau</span>
+                      </div>
+                   </div>
+                </div>
+                <p className="text-gray-400 mt-8">Oprix acts as the intelligent middleware layer, extracting data, processing it, and pushing insights back to your dashboard of choice.</p>
+            </div>
+          </div>
+
+          {selectedService && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <div 
+                className="absolute inset-0 bg-black/80 backdrop-blur-sm" 
+                onClick={() => setSelectedService(null)}
+              ></div>
+              <div className="relative glass-panel bg-[#13131f] border border-white/10 rounded-2xl max-w-2xl w-full p-8 md:p-12 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+                 <button 
+                   onClick={() => setSelectedService(null)}
+                   className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white bg-white/5 rounded-full hover:bg-white/10 transition-colors"
+                 >
+                   <X className="w-6 h-6" />
+                 </button>
+
+                 <div className="flex items-center space-x-4 mb-6">
+                   <div className="w-12 h-12 bg-oprix-accent/20 rounded-lg flex items-center justify-center border border-oprix-accent/30">
+                      {iconMap[selectedService.icon] && React.createElement(iconMap[selectedService.icon], { className: "w-6 h-6 text-oprix-accent" })}
+                   </div>
+                   <h2 className="text-3xl font-display font-bold">{selectedService.title}</h2>
+                 </div>
+
+                 <div className="space-y-6">
+                    <div>
+                       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Description</h3>
+                       <p className="text-gray-300 text-lg leading-relaxed">{selectedService.details}</p>
+                    </div>
+
+                    <div>
+                       <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Key Benefits</h3>
+                       <div className="grid gap-3">
+                          {selectedService.benefits && selectedService.benefits.map((benefit, idx) => (
+                            <div key={idx} className="flex items-start">
+                               <Check className="w-5 h-5 text-oprix-accent mr-3 shrink-0" />
+                               <span className="text-gray-300">{benefit}</span>
+                            </div>
+                          ))}
+                       </div>
+                    </div>
+
+                    <div className="pt-6 border-t border-white/10 flex justify-end">
+                       <button 
+                         onClick={() => setSelectedService(null)}
+                         className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors mr-3"
+                       >
+                         Close
+                       </button>
+                       <button className="px-6 py-2 bg-oprix-accent hover:bg-oprix-accentHover text-white font-semibold rounded-lg shadow-lg shadow-teal-500/20">
+                         Request Demo
+                       </button>
+                    </div>
+                 </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const Resources = () => {
+      const data = [
+        { name: 'Q1', manual: 4000, ai: 2400 },
+        { name: 'Q2', manual: 3000, ai: 1398 },
+        { name: 'Q3', manual: 2000, ai: 9800 },
+        { name: 'Q4', manual: 2780, ai: 3908 },
+        { name: 'Q5', manual: 1890, ai: 4800 },
+      ];
+
+      return (
+        <div className="pt-20 pb-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-16">
+              <h1 className="text-4xl md:text-6xl font-display font-bold mb-6">Insights & Intelligence</h1>
+              <p className="text-xl text-gray-400 max-w-2xl">
+                Latest research, whitepapers, and case studies on enterprise automation.
+              </p>
+            </div>
+
+            <div className="glass-panel rounded-3xl p-8 md:p-12 mb-20 border border-white/10">
+               <div className="grid lg:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <span className="text-oprix-accent font-bold tracking-wider text-sm mb-2 block">FEATURED REPORT</span>
+                    <h2 className="text-3xl font-bold mb-4">The State of ERP Automation 2025</h2>
+                    <p className="text-gray-400 mb-6 leading-relaxed">
+                      We analyzed over 500 SAP implementations to understand where AI delivers the highest ROI. The results point to supply chain predictive modeling as the key differentiator.
+                    </p>
+                    <button className="flex items-center space-x-2 bg-white text-black px-6 py-3 rounded-lg font-bold hover:bg-gray-200 transition-colors">
+                       <Download className="w-5 h-5" />
+                       <span>Download PDF (4.2MB)</span>
+                    </button>
+                  </div>
+                  <div className="bg-black/40 rounded-xl p-6 h-80 border border-white/5">
+                     <h4 className="text-sm font-gray-500 mb-4 text-center">Productivity Index (AI vs Manual)</h4>
+                     <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={data}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                          <XAxis dataKey="name" stroke="#666" />
+                          <YAxis stroke="#666" />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: '#111', border: '1px solid #333' }}
+                            itemStyle={{ color: '#fff' }}
+                          />
+                          <Line type="monotone" dataKey="ai" stroke="#14b8a6" strokeWidth={3} dot={{r: 4}} />
+                          <Line type="monotone" dataKey="manual" stroke="#64748b" strokeWidth={2} strokeDasharray="5 5" />
+                        </LineChart>
+                     </ResponsiveContainer>
+                  </div>
+               </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+               {[1, 2, 3, 4, 5, 6].map((i) => (
+                 <div key={i} className="group cursor-pointer">
+                    <div className="aspect-video bg-gray-800 rounded-xl mb-4 overflow-hidden relative">
+                       <div className="absolute inset-0 bg-oprix-accent/0 group-hover:bg-oprix-accent/10 transition-colors z-10"></div>
+                       <img src={`https://picsum.photos/600/400?random=${i + 10}`} alt="Article Cover" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </div>
+                    <div className="flex items-center space-x-2 text-xs font-semibold text-oprix-accent mb-2">
+                       <span>WHITE PAPER</span>
+                       <span className="w-1 h-1 rounded-full bg-gray-600"></span>
+                       <span>5 MIN READ</span>
+                    </div>
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-oprix-accent transition-colors">Optimizing Accounts Payable with Computer Vision</h3>
+                    <p className="text-sm text-gray-500 line-clamp-2">Learn how deep learning algorithms can reduce invoice processing errors by 98% within existing workflows.</p>
+                 </div>
+               ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const Contact = () => {
+      const { content } = useSite();
+      const [formState, setFormState] = useState({ name: '', email: '', company: '', message: '' });
+      const [isSubmitting, setIsSubmitting] = useState(false);
+      const [isSent, setIsSent] = useState(false);
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setTimeout(() => {
+          setIsSubmitting(false);
+          setIsSent(true);
+        }, 1500);
+      };
+
+      return (
+        <div className="pt-20 pb-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-16">
+              <div>
+                <h1 className="text-5xl font-display font-bold mb-8">Start Your Transformation</h1>
+                <p className="text-xl text-gray-400 mb-12">
+                  Ready to automate your enterprise? Reach out to our solution architects for a tailored consultation.
+                </p>
+
+                <div className="space-y-8">
+                  <div className="flex items-start space-x-6">
+                     <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center shrink-0">
+                        <Mail className="w-6 h-6 text-oprix-accent" />
+                     </div>
+                     <div>
+                        <h3 className="text-lg font-bold text-white mb-1">Email Us</h3>
+                        <p className="text-gray-400 text-lg">{content.contact.email}</p>
+                     </div>
+                  </div>
+                  
+                  <div className="flex items-start space-x-6">
+                     <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center shrink-0">
+                        <MapPin className="w-6 h-6 text-oprix-accent" />
+                     </div>
+                     <div>
+                        <h3 className="text-lg font-bold text-white mb-1">Headquarters</h3>
+                        <p className="text-gray-400 text-lg">{content.contact.address}</p>
+                     </div>
+                  </div>
+
+                  <div className="flex items-start space-x-6">
+                     <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center shrink-0">
+                        <Phone className="w-6 h-6 text-oprix-accent" />
+                     </div>
+                     <div>
+                        <h3 className="text-lg font-bold text-white mb-1">Call Support</h3>
+                        <p className="text-gray-400 text-lg">{content.contact.phone}</p>
+                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="glass-panel p-8 md:p-12 rounded-3xl border border-white/10">
+                {isSent ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center py-20">
+                    <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
+                      <Send className="w-10 h-10 text-green-500" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">Message Sent</h3>
+                    <p className="text-gray-400">Thank you for contacting Oprix AI. A representative will be in touch within 24 hours.</p>
+                    <button onClick={() => setIsSent(false)} className="mt-8 text-oprix-accent hover:underline">Send another message</button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-400">Full Name</label>
+                        <input 
+                          required
+                          type="text" 
+                          className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-oprix-accent focus:outline-none transition-colors"
+                          value={formState.name}
+                          onChange={e => setFormState({...formState, name: e.target.value})}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-400">Company</label>
+                        <input 
+                          type="text" 
+                          className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-oprix-accent focus:outline-none transition-colors"
+                          value={formState.company}
+                          onChange={e => setFormState({...formState, company: e.target.value})}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-400">Work Email</label>
+                      <input 
+                        required
+                        type="email" 
+                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-oprix-accent focus:outline-none transition-colors"
+                        value={formState.email}
+                        onChange={e => setFormState({...formState, email: e.target.value})}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-gray-400">Message</label>
+                      <textarea 
+                        required
+                        rows={5}
+                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-oprix-accent focus:outline-none transition-colors"
+                        value={formState.message}
+                        onChange={e => setFormState({...formState, message: e.target.value})}
+                      />
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className="w-full bg-oprix-accent hover:bg-oprix-accentHover text-white font-bold py-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                    </button>
+                  </form>
+                )}
+              </div>
+
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const Admin = () => {
+      const { content, updateContent, resetContent } = useSite();
+      const [activeTab, setActiveTab] = useState('home');
+
+      const handleChange = (section, key, value) => {
+        updateContent(section, { [key]: value });
+      };
+
+      return (
+        <div className="pt-20 pb-24 min-h-screen bg-gray-950">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center mb-10">
+              <div>
+                <h1 className="text-3xl font-display font-bold">Admin Dashboard</h1>
+                <p className="text-gray-400">Manage website content and settings.</p>
+              </div>
+              <button 
+                onClick={resetContent}
+                className="flex items-center px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Reset Defaults
+              </button>
+            </div>
+
+            <div className="grid grid-cols-12 gap-8">
+              <div className="col-span-12 md:col-span-3 space-y-2">
+                 <button 
+                   onClick={() => setActiveTab('home')}
+                   className={`w-full text-left px-4 py-3 rounded-lg flex items-center ${activeTab === 'home' ? 'bg-oprix-accent text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                 >
+                   <LayoutIcon className="w-4 h-4 mr-3" /> Home Page
+                 </button>
+                 <button 
+                   onClick={() => setActiveTab('about')}
+                   className={`w-full text-left px-4 py-3 rounded-lg flex items-center ${activeTab === 'about' ? 'bg-oprix-accent text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                 >
+                   <Type className="w-4 h-4 mr-3" /> About Page
+                 </button>
+                 <button 
+                   onClick={() => setActiveTab('services')}
+                   className={`w-full text-left px-4 py-3 rounded-lg flex items-center ${activeTab === 'services' ? 'bg-oprix-accent text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                 >
+                   <ImageIcon className="w-4 h-4 mr-3" /> Services
+                 </button>
+              </div>
+
+              <div className="col-span-12 md:col-span-9 bg-gray-900 rounded-xl border border-white/5 p-8">
+                 {activeTab === 'home' && (
+                   <div className="space-y-6">
+                     <h2 className="text-xl font-bold mb-6 pb-2 border-b border-white/5">Home Section Editing</h2>
+                     
+                     <div className="space-y-2">
+                       <label className="text-sm font-semibold text-gray-400">Hero Headline</label>
+                       <input 
+                         type="text" 
+                         className="w-full bg-black border border-white/10 rounded p-3 text-white focus:border-oprix-accent focus:outline-none"
+                         value={content.home.heroTitle}
+                         onChange={(e) => handleChange('home', 'heroTitle', e.target.value)}
+                       />
+                     </div>
+
+                     <div className="space-y-2">
+                       <label className="text-sm font-semibold text-gray-400">Hero Subtitle</label>
+                       <textarea 
+                         rows={3}
+                         className="w-full bg-black border border-white/10 rounded p-3 text-white focus:border-oprix-accent focus:outline-none"
+                         value={content.home.heroSubtitle}
+                         onChange={(e) => handleChange('home', 'heroSubtitle', e.target.value)}
+                       />
+                     </div>
+
+                     <div className="space-y-2">
+                       <label className="text-sm font-semibold text-gray-400">Value Prop Title</label>
+                       <input 
+                         type="text" 
+                         className="w-full bg-black border border-white/10 rounded p-3 text-white focus:border-oprix-accent focus:outline-none"
+                         value={content.home.valuePropTitle}
+                         onChange={(e) => handleChange('home', 'valuePropTitle', e.target.value)}
+                       />
+                     </div>
+                     
+                     <div className="p-4 bg-green-500/10 border border-green-500/20 rounded flex items-center text-green-400 text-sm">
+                       <Save className="w-4 h-4 mr-2" />
+                       Changes are saved automatically to local storage.
+                     </div>
+                   </div>
+                 )}
+
+                 {activeTab === 'about' && (
+                   <div className="space-y-6">
+                     <h2 className="text-xl font-bold mb-6 pb-2 border-b border-white/5">About Section Editing</h2>
+                     
+                     <div className="space-y-2">
+                       <label className="text-sm font-semibold text-gray-400">Mission Statement</label>
+                       <textarea 
+                         rows={4}
+                         className="w-full bg-black border border-white/10 rounded p-3 text-white focus:border-oprix-accent focus:outline-none"
+                         value={content.about.missionDesc}
+                         onChange={(e) => handleChange('about', 'missionDesc', e.target.value)}
+                       />
+                     </div>
+
+                     <div className="space-y-2">
+                       <label className="text-sm font-semibold text-gray-400">Vision Statement</label>
+                       <textarea 
+                         rows={4}
+                         className="w-full bg-black border border-white/10 rounded p-3 text-white focus:border-oprix-accent focus:outline-none"
+                         value={content.about.visionDesc}
+                         onChange={(e) => handleChange('about', 'visionDesc', e.target.value)}
+                       />
+                     </div>
+                   </div>
+                 )}
+
+                 {activeTab === 'services' && (
+                   <div className="space-y-6">
+                     <h2 className="text-xl font-bold mb-6 pb-2 border-b border-white/5">Services List (Read Only in Demo)</h2>
+                     <p className="text-gray-500 italic">Advanced array editing would be implemented here in a full production CMS. Currently showcasing text field binding only.</p>
+                     
+                     <div className="space-y-4 opacity-50 pointer-events-none">
+                        {content.services.items.map((item, idx) => (
+                          <div key={idx} className="p-4 border border-white/10 rounded bg-black">
+                            <div className="font-bold">{item.title}</div>
+                            <div className="text-sm text-gray-500">{item.desc}</div>
+                          </div>
+                        ))}
+                     </div>
+                   </div>
+                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- APP ---
+
+    const App = () => {
+      return (
+        <SiteProvider>
+          <HashRouter>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Layout>
+            <AIChatWidget />
+          </HashRouter>
+        </SiteProvider>
+      );
+    };
+
+    // --- RENDER ---
+    const rootElement = document.getElementById('root');
+    const root = createRoot(rootElement);
+    root.render(<App />);
+
+  </script>
+</body>
 </html>
